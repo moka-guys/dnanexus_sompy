@@ -21,7 +21,7 @@ This app outputs .csv and .json results files for each vcf assessed (saved in th
 
 ## How does this app work?
 1. input VCFs are downloaded
-2. if required, a dockerised version of bcftools is used to convert the query VCF to the correct format
+2. if required, a dockerised version of bcftools (v1.13) is used to convert the query VCF to the correct format
 3. A dockerised version of hap.py is used, calling the som.py module
 4. som.py compares the query VCF with the truth VCF, and returns recall (sensitivity) results
 5. the output files are upload to the DNA Nexus project.
