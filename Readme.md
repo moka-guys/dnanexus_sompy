@@ -1,4 +1,4 @@
-# dnanexus_sompy v1.0
+# dnanexus_sompy v1.1
 
 ## What does this app do?
 This app uses the [som.py](https://github.com/Illumina/hap.py/blob/master/doc/sompy.md) module from the [hap.py](https://github.com/Illumina/hap.py) package from Illumina (v0.3.9 (Docker: https://hub.docker.com/r/pkrusche/hap.py/)). Two VCFs can be compared (e.g. a "truth" VCF against a query) and the recall reported. 
