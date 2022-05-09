@@ -9,7 +9,8 @@ To check that all expected variants have been called for commercial control samp
 ## What inputs are required for this app to run?
 Input files:
 - a "truth" VCF (.vcf)
-- a query VCF (.vcf) *- output from the workflow being assessed*
+- a query VCF (.vcf) *- output from the workflow/variant caller being assessed. Note: an array of VCFs can be supplied but they should all use the same settings (i.e. not a mix of varscan and vardict VCFs). If analysing TSO500 VCFs a single VCF should be supplied.*
+
 
 Parameters:
 - Skip - default=true. Set to false to allow app to run. Allows app to be included in workflows but only run for relevant samples e.g. HD200.
