@@ -24,6 +24,19 @@ if [ $skip == false ];
 
 		docker load < /home/dnanexus/"${sompy_Docker_image_file}"
 
+		#if TSO500 vcf need to run through bcftools before running sompy. Load docker image here so can be used for multiple files in the loop below
+		if [ $TSO == true ]; #default false
+			then
+				echo "TSO500 run. VCF requires conversion with bcftools"
+				# get bcftools docker. 
+				bcftools_Docker_ID=project-ByfFPz00jy1fk6PjpZ95F27J:file-G55XqF00jy1QkJ174ZzZfzV5
+				dx download ${bcftools_Docker_ID}
+				bcftools_Docker_image_file=$(dx describe ${bcftools_Docker_ID} --name)
+				bcftools_Docker_image_name=$(tar xfO "${bcftools_Docker_image_file}" manifest.json | sed -E 's/.*"RepoTags":\["?([^"]*)"?.*/\1/')
+				docker load < /home/dnanexus/"${bcftools_Docker_image_file}"
+				
+		fi
+
 		# loop through array of queryVCF input files
 		for (( i=0; i<${#queryVCF_path[@]}; i++ ));
 		# print the name of the vcf to be run
@@ -33,24 +46,19 @@ if [ $skip == false ];
 			then
 				echo "TSO500 run. VCF requires conversion with bcftools"
 				# get bcftools docker. 
-				bcftools_Docker_ID=project-ByfFPz00jy1fk6PjpZ95F27J:file-G55XqF00jy1QkJ174ZzZfzV5
-				dx download ${bcftools_Docker_ID}
-				Docker_image_file=$(dx describe ${bcftools_Docker_ID} --name)
-				Docker_image_name=$(tar xfO "${Docker_image_file}" manifest.json | sed -E 's/.*"RepoTags":\["?([^"]*)"?.*/\1/')
 
 				vcf_name=${queryVCF_name[i]%.genome.vcf*}
 
-				docker load < /home/dnanexus/"${Docker_image_file}"
-				echo "Using docker image ${Docker_image_name}"
+				echo "Using docker image ${bcftools_Docker_image_name}"
 					# -e to exclude lines where ALT="." -o output name
 				bcftools_output=${vcf_name}.converted.vcf
-				docker run -v /home/dnanexus/in/queryVCF/$i:/query -v /home/dnanexus/out/sompy_output/QC:/output --rm ${Docker_image_name} view -e 'ALT="."' -o /output/${bcftools_output} /query/${queryVCF_name[i]}
+				docker run -v /home/dnanexus/in/queryVCF/$i:/query -v /home/dnanexus/out/sompy_output/QC:/output --rm ${bcftools_Docker_image_name} view -e 'ALT="."' -o /output/${bcftools_output} /query/${queryVCF_name[i]}
 				
 		fi
 
 		#run sompy. Different commands for varscan (additional output information available) and TSO runs (different input vcf, using one created with bcftools above)
 		echo "Using docker image ${sompy_Docker_image_name}"
-		
+
 		if [ $varscan == true ]; #default false
 			then
 			sudo docker run -v /home/dnanexus/in/truthVCF:/truth -v /home/dnanexus/in/queryVCF/$i:/query -v /home/dnanexus/reference:/reference -v /home/dnanexus/out/sompy_output/QC:/output --rm ${sompy_Docker_image_name} /opt/hap.py/bin/som.py /truth/${truthVCF_name} /query/${queryVCF_name[i]} -r /reference/genome.fa --feature-table hcc.varscan2.snv -o /output/${queryVCF_name[i]}	
