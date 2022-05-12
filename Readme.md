@@ -1,4 +1,4 @@
-# dnanexus_sompy v1.1
+# dnanexus_sompy v1.2
 
 ## What does this app do?
 This app uses the [som.py](https://github.com/Illumina/hap.py/blob/master/doc/sompy.md) module from the [hap.py](https://github.com/Illumina/hap.py) package from Illumina (v0.3.9 (Docker: https://hub.docker.com/r/pkrusche/hap.py/)). Two VCFs can be compared (e.g. a "truth" VCF against a query) and the recall reported. 
@@ -9,7 +9,7 @@ To check that all expected variants have been called for commercial control samp
 ## What inputs are required for this app to run?
 Input files:
 - a "truth" VCF (.vcf)
-- a query VCF (.vcf) *- output from the workflow/variant caller being assessed. Note: an array of VCFs can be supplied but they should all use the same settings (i.e. not a mix of varscan and TSO500 inputs which require different settings).*
+- a query VCF (.vcf) *- output from the workflow/variant caller being assessed. This input is option so if the variant caller fails to output a vcf the app can still be run in a workflow. Note: an array of VCFs can be supplied but they should all use the same settings (i.e. not a mix of varscan and TSO500 inputs which require different settings).*
 
 
 Parameters:
